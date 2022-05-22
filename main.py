@@ -53,7 +53,11 @@ def download_thumbnails(ids: list) -> None:
         shutil.rmtree(channel_name)
     os.mkdir(channel_name)
     for id in track(ids, description="Downloading"):
-        img = requests.get(f"http://img.youtube.com/vi/{id}/maxresdefault.jpg").content
+        max_res_url = f"https://i.ytimg.com/vi/{id}/maxresdefault.jpg"
+        hq_res_url = f"https://i.ytimg.com/vi/{id}/hqdefault.jpg"
+        request = requests.get(max_res_url)
+        # check if max res available
+        img = request.content if request.status_code == 200 else requests.get(hq_res_url).content
         with open(f"{channel_name}/{id}.jpg", "wb") as handler:
             handler.write(img)
 
